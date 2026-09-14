@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0b0b14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PushUp RPG" />
+    <title>PushUp RPG</title>
+  </head>
+  <body>
+    <div id="app">
+      <video id="cam" playsinline muted></video>
+      <canvas id="overlay"></canvas>
+
+      <header id="hud-top">
+        <div id="badge">
+          <span id="lvl">Lv 1</span>
+          <span id="title">Novato</span>
+        </div>
+        <div id="xp-wrap"><div id="xp-fill"></div></div>
+        <nav id="nav">
+          <button id="btn-flip" title="Cambiar cámara">🔄</button>
+          <button id="btn-ach" title="Logros">🏆</button>
+          <button id="btn-stats" title="Stats">📊</button>
+        </nav>
+      </header>
+
+      <main id="rep-hud">
+        <div id="count">0</div>
+        <div id="sub">
+          <span id="set">Set: 0</span> · <span id="best">Mejor: 0</span>
+        </div>
+        <button id="btn-add" title="Añadir una manual (si la cámara falla)">＋1</button>
+      </main>
+
+      <div id="boss-hud" hidden>
+        <span id="boss-name">🐉 Dragón</span>
+        <div id="boss-bar"><div id="boss-fill"></div></div>
+        <span id="boss-hp">10/10</span>
+      </div>
+
+      <div id="toast" hidden></div>
+
+      <section id="start-screen">
+        <h1>🏋️ PUSH-UP RPG</h1>
+        <p>
+          Apoya el teléfono donde veas tu cuerpo completo de lado, dale a ADENTRO y haz lagartijas. Cada una pega al
+          monstruo y suma XP. Con una sola mano, doble XP.
+        </p>
+        <button id="btn-start">ADENTRO</button>
+        <p class="hint">Todo queda guardado solo en tu teléfono.</p>
+      </section>
+
+      <div id="modal-ach" class="modal" hidden>
+        <div class="modal-box">
+          <h2>🏆 Logros</h2>
+          <ul id="ach-list"></ul>
+          <button id="btn-close-ach">Cerrar</button>
+        </div>
+      </div>
+
+      <div id="modal-stats" class="modal" hidden>
+        <div class="modal-box">
+          <h2>📊 Stats</h2>
+          <dl id="stats-list"></dl>
+          <button id="btn-close-stats">Cerrar</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

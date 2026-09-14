@@ -1,0 +1,20 @@
+{
+  "name": "pushup-rpg",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "check": "node --no-warnings --experimental-strip-types src/selfcheck.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.0.1"
+  }
+}
