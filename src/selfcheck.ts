@@ -8,63 +8,76 @@ import { applyRep, bossHpFor, defaultPlayer, levelOf, titleFor } from './rpg.ts'
 assert.ok(Math.abs(angle3({ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }) - 90) < 1e-9, 'ángulo recto')
 assert.ok(Math.abs(angle3({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }) - 180) < 1e-9, 'brazo recto')
 
-// --- detector: analyze (posturas sintéticas de plancha, en píxeles) ---
+// --- detector: analyze (posturas sintéticas en coords normalizadas 0..1) ---
 const blank = () => Array.from({ length: 33 }, () => ({ x: 0, y: 0 }))
 
-// abajo: hombros casi a la altura de las muñecas (gap < GAP_DOWN), codos
-// flexionados (ang. codo < 90), muñecas al ras (misma altura)
+// abajo: cuerpo cerca de la cámara (torso grande), nariz baja en pantalla,
+// codo plegado, muñecas al ras
 const down = blank()
-down[11] = { x: 10, y: 100 }; down[12] = { x: 12, y: 100 }
-down[13] = { x: 8, y: 80 }; down[14] = { x: 10, y: 80 }
-down[15] = { x: 40, y: 106 }; down[16] = { x: 42, y: 106 }
-down[23] = { x: 22, y: 130 }; down[24] = { x: 28, y: 134 }
+down[0] = { x: 0.1, y: 0.67 }
+down[11] = { x: 0.21, y: 0.625 }; down[12] = { x: 0.25, y: 0.625 }
+down[13] = { x: 0.125, y: 0.708 }; down[14] = { x: 0.167, y: 0.708 }
+down[15] = { x: 0.31, y: 0.75 }; down[16] = { x: 0.35, y: 0.75 }
+down[23] = { x: 0.23, y: 0.979 }; down[24] = { x: 0.27, y: 0.979 }
 const aDown = analyze(down)
 assert.ok(aDown.elbow < CONFIG.ANGLE_DOWN, `codo plegado (${aDown.elbow})`)
 assert.ok(aDown.wristGapNorm < 0.1, 'doble mano: muñecas a la misma altura')
-assert.ok(aDown.shoulderGap < CONFIG.GAP_DOWN, `hombros bajos (${aDown.shoulderGap})`)
+assert.ok(aDown.noseY > CONFIG.NOSE_DOWN, `nariz abajo (${aDown.noseY})`)
+assert.ok(aDown.bodyScale > CONFIG.SCALE_DOWN, `torso grande/cerca (${aDown.bodyScale})`)
 
-// arriba: brazos extendidos (colineales), hombros elevados sobre las manos
+// arriba: cuerpo lejos (torso chico), nariz alta, brazos extendidos
 const up = blank()
-up[11] = { x: 10, y: 0 }; up[12] = { x: 12, y: 0 }
-up[13] = { x: 30, y: 60 }; up[14] = { x: 32, y: 60 }
-up[15] = { x: 50, y: 110 }; up[16] = { x: 52, y: 110 }
-up[23] = { x: 22, y: 22 }; up[24] = { x: 28, y: 26 }
+up[0] = { x: 0.05, y: 0.13 }
+up[11] = { x: 0.25, y: 0.17 }; up[12] = { x: 0.29, y: 0.17 }
+up[13] = { x: 0.33, y: 0.20 }; up[14] = { x: 0.375, y: 0.20 }
+up[15] = { x: 0.40, y: 0.23 }; up[16] = { x: 0.44, y: 0.23 }
+up[23] = { x: 0.28, y: 0.33 }; up[24] = { x: 0.30, y: 0.34 }
 const aUp = analyze(up)
 assert.ok(aUp.elbow > CONFIG.ANGLE_UP, `codo extendido (${aUp.elbow})`)
-assert.ok(aUp.shoulderGap > CONFIG.GAP_UP, `hombros elevados (${aUp.shoulderGap})`)
+assert.ok(aUp.noseY < CONFIG.NOSE_UP, `nariz arriba (${aUp.noseY})`)
+assert.ok(aUp.bodyScale < CONFIG.SCALE_UP, `torso chico/lejos (${aUp.bodyScale})`)
 
 // una mano: muñeca derecha levantada hacia la cadera (mano libre)
 const one = blank()
-one[11] = { x: 10, y: 0 }; one[12] = { x: 12, y: 0 }
-one[13] = { x: 10, y: 60 }; one[14] = { x: 12, y: 60 }
-one[15] = { x: 40, y: 56 }; one[16] = { x: 35, y: 120 }
-one[23] = { x: 22, y: 118 }; one[24] = { x: 28, y: 122 }
+one[11] = { x: 0.21, y: 0.625 }; one[12] = { x: 0.25, y: 0.625 }
+one[13] = { x: 0.125, y: 0.708 }; one[14] = { x: 0.167, y: 0.708 }
+one[15] = { x: 0.31, y: 0.75 }; one[16] = { x: 0.28, y: 0.90 }
+one[23] = { x: 0.23, y: 0.979 }; one[24] = { x: 0.27, y: 0.979 }
 const aOne = analyze(one)
 assert.ok(aOne.wristGapNorm >= CONFIG.ONE_HAND_GAP, `mano suelta detectada (${aOne.wristGapNorm})`)
 
-// --- detector: conteo de reps (señal activa: gapY) ---
+// --- detector: voto por mayoría ---
 const c = new RepCounter()
-assert.equal(c.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 }), null, 'extender no cuenta')
-assert.equal(c.update({ elbow: 60, wristGapNorm: 0, shoulderGap: 0.1 }), null, 'bajar no cuenta')
-const r = c.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 })
+assert.ok(c.votes(aUp).up >= 2, 'arriba: mayoría de votos up')
+assert.ok(c.votes(aDown).down >= 2, 'abajo: mayoría de votos down')
+assert.equal(c.update(aUp), null, 'extender no cuenta')
+assert.equal(c.update(aDown), null, 'bajar no cuenta')
+const r = c.update(aUp)
 assert.ok(r && !r.oneHanded, 'rep normal')
 assert.equal(c.count, 1)
 
 const c2 = new RepCounter()
-c2.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 })
-c2.update({ elbow: 60, wristGapNorm: 0.5, shoulderGap: 0.1 })
-const r2 = c2.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 })
+c2.update(aUp)
+const aDownOneHanded = { ...aDown, wristGapNorm: 0.6 }
+c2.update(aDownOneHanded)
+const r2 = c2.update(aUp)
 assert.ok(r2 && r2.oneHanded, 'rep a una mano')
 assert.equal(c2.oneHandedCount, 1)
 
-// zona muerta entre umbrales no rompe el conteo
+// zonas muertas no rompen el conteo (empate = mantener fase)
+const neutral = { elbow: 120, wristGapNorm: 0, shoulderGap: 0.4, bodyScale: 0.26, noseY: 0.4 }
 const c3 = new RepCounter()
-c3.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 })
-c3.update({ elbow: 95, wristGapNorm: 0, shoulderGap: 0.4 })
-c3.update({ elbow: 60, wristGapNorm: 0, shoulderGap: 0.1 })
-c3.update({ elbow: 100, wristGapNorm: 0, shoulderGap: 0.35 })
-c3.update({ elbow: 175, wristGapNorm: 0, shoulderGap: 0.9 })
+c3.update(aUp)
+c3.update(neutral)
+c3.update(aDown)
+c3.update(neutral)
+c3.update(aUp)
 assert.equal(c3.count, 1, 'histeresis')
+
+// empate sin empezar no decide por nadie
+const c4 = new RepCounter()
+assert.equal(c4.update(neutral), null, 'neutral no decide')
+assert.equal(c4.currentPhase, 'none')
 
 // --- rpg: curva de niveles ---
 assert.equal(levelOf(0), 1)

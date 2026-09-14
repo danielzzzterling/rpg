@@ -236,7 +236,11 @@ function loop(ts: number) {
         noPoseFrames = 0
         $('no-body').hidden = true
         if (cal) {
-          $('cal-panel').textContent = `codo ${a.elbow.toFixed(0)}° · gap ${a.shoulderGap.toFixed(2)} · ${counter.currentPhase}`
+          const v = counter.votes(a)
+          const face = counter.currentPhase === 'up' ? '▲' : counter.currentPhase === 'down' ? '▼' : '—'
+          $('cal-panel').textContent =
+            `${face} up${v.up}/dw${v.down} · sc ${a.bodyScale.toFixed(2)} ` +
+            `nose ${a.noseY.toFixed(2)} gap ${a.shoulderGap.toFixed(2)} codo ${a.elbow.toFixed(0)}°`
         }
       } else {
         drawSkeleton(null)
