@@ -20,8 +20,10 @@ npm run check
 ## Deploy a GitHub Pages
 
 1. Crea el repo en GitHub y súbelo a la rama `main`.
-2. En *Settings → Pages*, elige GitHub Actions como fuente.
+2. En *Settings → Pages*, en **Source** elige **GitHub Actions** (NO "Deploy from a branch").
 3. Cada push publica automáticamente (ver `.github/workflows/deploy.yml`).
+   Si después de un push el site se ve sin estilos ni JS, fuerza un redeploy desde
+   **Actions → Deploy → Run workflow**.
 
 La app queda en `https://<usuario>.github.io/<repo>/`. Ábrela en Safari del iPhone y usa "Añadir a pantalla de inicio" para modo standalone.
 
