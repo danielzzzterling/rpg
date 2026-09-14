@@ -41,5 +41,5 @@ export const CONFIG = {
 
   // Recursos MediaPipe (wasm desde CDN del mismo paquete, modelo local)
   WASM_ROOT: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm',
-  MODEL_URL: './pose-landmarker-lite.task',
+  MODEL_URL: './pose-landmarker-full.task',
 } as const

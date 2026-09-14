@@ -25,6 +25,7 @@ let landmarker: PoseLandmarker | null = null
 let running = false
 let frontCam = true
 let cal = false
+let noPoseFrames = 0
 let lastTs = 0
 let toastTimer = 0
 
@@ -130,6 +131,11 @@ async function initLandmarker() {
     },
     runningMode: 'VIDEO' as const,
     numPoses: 1,
+    // ponytail: confianza por defecto 0.5 corta el seguimiento en vistas
+    // frontales/iluminación irregular; 0.4 gana estabilidad sin falsos
+    // positivos visibles. Subir de nuevo si un objeto 'se convierte' en cuerpo.
+    minDetectionConfidence: 0.4,
+    minTrackingConfidence: 0.4,
   }
   try {
     landmarker = await PoseLandmarker.createFromOptions(fileset, opts)
@@ -227,11 +233,14 @@ function loop(ts: number) {
         const a: Analysis = analyze(pts)
         const rep = counter.update(a)
         if (rep) onRep(rep.oneHanded)
+        noPoseFrames = 0
+        $('no-body').hidden = true
         if (cal) {
           $('cal-panel').textContent = `codo ${a.elbow.toFixed(0)}° · gap ${a.shoulderGap.toFixed(2)} · ${counter.currentPhase}`
         }
       } else {
         drawSkeleton(null)
+        if (++noPoseFrames > 40) $('no-body').hidden = false
       }
     } catch {
       /* frame puntual fallido, se sigue intentando */

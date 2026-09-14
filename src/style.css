@@ -315,6 +315,22 @@ body {
   display: none;
 }
 
+#no-body {
+  margin-top: 10px;
+  max-width: 82%;
+  background: rgba(255,80,60,0.15);
+  border: 1px solid rgba(255,80,60,0.45);
+  color: #ffb4a8;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#no-body[hidden] {
+  display: none;
+}
+
 /* ---------- Start screen ---------- */
 
 #start-screen {
