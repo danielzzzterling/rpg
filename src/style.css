@@ -1,3 +1,9 @@
+/* ============================================================
+   PUSH-UP RPG — UI
+   Dark fantasy RPG theme. Gold (#ffb020) + red (#ff3d5a) accents.
+   ponytail: everything here is CSS-only animations (no JS overhead).
+   ============================================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -5,9 +11,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body,
-#app {
+html, body, #app {
   height: 100dvh;
   overflow: hidden;
 }
@@ -15,7 +19,7 @@ body,
 body {
   background: #0b0b14;
   color: #eee;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'SF Pro Display', system-ui, -apple-system, 'Segoe UI', sans-serif;
   touch-action: none;
   user-select: none;
 }
@@ -24,8 +28,9 @@ body {
   position: relative;
 }
 
-#cam,
-#overlay {
+/* ---------- Camera + skeleton canvas ---------- */
+
+#cam, #overlay {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -38,7 +43,7 @@ body {
   pointer-events: none;
 }
 
-/* ---------- HUD superior ---------- */
+/* ---------- HUD top ---------- */
 
 #hud-top {
   position: absolute;
@@ -48,8 +53,10 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: calc(env(safe-area-inset-top) + 10px) 12px 10px;
-  background: linear-gradient(#000c, transparent);
+  padding: calc(env(safe-area-inset-top) + 10px) 14px 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 3;
 }
 
@@ -61,29 +68,36 @@ body {
 
 #lvl {
   font-weight: 800;
-  font-size: 20px;
+  font-size: 22px;
   color: #ffb020;
+  text-shadow: 0 0 12px rgba(255,176,32,0.5);
 }
 
 #title {
-  font-size: 12px;
-  color: #ccc;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4a84a;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 #xp-wrap {
+  position: relative;
   flex: 1;
-  height: 10px;
-  background: #ffffff1f;
+  height: 12px;
+  background: rgba(255,255,255,0.08);
   border-radius: 6px;
   overflow: hidden;
+  border: 1px solid rgba(255,176,32,0.15);
 }
 
 #xp-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #ffb020, #ff6a3d);
+  background: linear-gradient(90deg, #d4890a, #ffb020, #ffd060);
   border-radius: 6px;
-  transition: width 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 12px rgba(255,176,32,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 #nav {
@@ -93,130 +107,189 @@ body {
 
 #nav button {
   font-size: 18px;
-  background: #ffffff14;
-  border: 1px solid #ffffff2a;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 10px;
   padding: 8px 10px;
   color: #fff;
+  transition: background 0.15s, transform 0.1s;
 }
 
-/* ---------- HUD de reps ---------- */
+#nav button:active {
+  background: rgba(255,255,255,0.18);
+  transform: scale(0.93);
+}
+
+/* ---------- Rep HUD ---------- */
 
 #rep-hud {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(env(safe-area-inset-bottom) + 14px);
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
   text-align: center;
   z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 #count {
-  font-size: 84px;
+  font-size: 88px;
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 2px 12px #000c;
   color: #fff;
+  text-shadow:
+    0 0 20px rgba(255,255,255,0.15),
+    0 2px 8px rgba(0,0,0,0.6);
+  transition: color 0.15s;
 }
 
 #count.pop {
-  animation: pop 0.15s ease;
+  animation: pop 0.18s cubic-bezier(0.22, 1, 0.36, 1);
   color: #ffb020;
+  text-shadow:
+    0 0 30px rgba(255,176,32,0.6),
+    0 0 60px rgba(255,176,32,0.2);
 }
 
 @keyframes pop {
-  50% {
-    transform: scale(1.15);
-  }
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
 
 #sub {
   display: flex;
   gap: 8px;
-  font-size: 15px;
-  color: #ddd;
-  text-shadow: 0 1px 4px #000;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  letter-spacing: 0.5px;
 }
 
 #btn-add {
-  font-size: 15px;
-  background: #ffffff14;
-  border: 1px solid #ffffff2a;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 999px;
-  padding: 6px 16px;
-  color: #fff;
+  padding: 6px 18px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  transition: background 0.15s, transform 0.1s;
 }
 
-/* ---------- Boss bar ---------- */
+#btn-add:active {
+  background: rgba(255,255,255,0.18);
+  transform: scale(0.93);
+}
+
+/* ---------- Boss HUD ---------- */
 
 #boss-hud {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 124px;
-  width: min(340px, 82vw);
+  bottom: 130px;
+  width: min(360px, 84vw);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   z-index: 3;
-  background: #0008;
-  padding: 6px 10px;
-  border-radius: 12px;
-  border: 1px solid #ff3d5a55;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,61,90,0.3);
+  box-shadow:
+    0 0 20px rgba(255,61,90,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  animation: bossPulse 3s ease-in-out infinite;
+}
+
+@keyframes bossPulse {
+  0%, 100% { border-color: rgba(255,61,90,0.3); }
+  50%      { border-color: rgba(255,61,90,0.6); }
 }
 
 #boss-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   color: #ff6a7a;
+  text-shadow: 0 0 8px rgba(255,61,90,0.3);
 }
 
 #boss-bar {
   flex: 1;
-  height: 8px;
-  background: #ffffff1f;
-  border-radius: 4px;
+  height: 10px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 5px;
   overflow: hidden;
+  border: 1px solid rgba(255,61,90,0.15);
 }
 
 #boss-fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #ff3d5a, #ffb020);
-  border-radius: 4px;
-  transition: width 0.2s ease;
+  background: linear-gradient(90deg, #ff3d5a, #ff6a3d);
+  border-radius: 5px;
+  transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 8px rgba(255,61,90,0.4);
+}
+
+#boss-bar.hit {
+  animation: bossHit 0.3s ease;
+}
+
+@keyframes bossHit {
+  0%   { filter: brightness(1); }
+  50%  { filter: brightness(1.6) sepia(0.3); }
+  100% { filter: brightness(1); }
 }
 
 #boss-hp {
-  font-size: 12px;
-  color: #ccc;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
   white-space: nowrap;
+  min-width: 42px;
+  text-align: right;
 }
 
 /* ---------- Toast ---------- */
 
 #toast {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 64px);
+  top: calc(env(safe-area-inset-top) + 66px);
   left: 50%;
-  transform: translateX(-50%);
-  background: #000b;
-  border: 1px solid #ffb02066;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,176,32,0.25);
   color: #fff;
-  padding: 8px 16px;
-  border-radius: 12px;
+  padding: 10px 20px;
+  border-radius: 14px;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   z-index: 5;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
 }
 
-/* ---------- Portada ---------- */
+#toast:not([hidden]) {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------- Start screen ---------- */
 
 #start-screen {
   position: absolute;
@@ -226,39 +299,64 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  padding: 32px;
+  gap: 24px;
+  padding: 36px 28px;
   text-align: center;
-  background: radial-gradient(120% 90% at 50% 10%, #1b1b33, #0b0b14);
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 20%, rgba(255,176,32,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 80%, rgba(255,61,90,0.04) 0%, transparent 60%),
+    linear-gradient(180deg, #12122a 0%, #0b0b14 60%);
 }
 
 #start-screen h1 {
-  font-size: 38px;
+  font-size: 40px;
+  font-weight: 900;
   letter-spacing: 1px;
+  color: #ffb020;
+  text-shadow:
+    0 0 30px rgba(255,176,32,0.4),
+    0 0 60px rgba(255,176,32,0.15);
+  line-height: 1.2;
 }
 
 #start-screen p {
-  max-width: 420px;
-  color: #bbb;
-  font-size: 15px;
-  line-height: 1.5;
+  max-width: 380px;
+  color: rgba(255,255,255,0.55);
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 #btn-start {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: 3px;
-  padding: 16px 44px;
+  letter-spacing: 4px;
+  padding: 18px 52px;
   border: none;
   border-radius: 999px;
   color: #140a00;
-  background: linear-gradient(90deg, #ffb020, #ff6a3d);
-  box-shadow: 0 8px 24px #ff6a3d44;
+  background: linear-gradient(135deg, #ffd060 0%, #ffb020 40%, #ff8a10 100%);
+  box-shadow:
+    0 4px 20px rgba(255,176,32,0.35),
+    0 0 40px rgba(255,176,32,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  animation: btnGlow 2.5s ease-in-out infinite;
+  transition: transform 0.15s;
+}
+
+#btn-start:active {
+  transform: scale(0.95);
+}
+
+@keyframes btnGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(255,176,32,0.35), 0 0 40px rgba(255,176,32,0.1); }
+  50%      { box-shadow: 0 4px 30px rgba(255,176,32,0.55), 0 0 60px rgba(255,176,32,0.25); }
 }
 
 #start-screen .hint {
-  font-size: 12px;
-  color: #777;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.3px;
 }
 
 /* ---------- Modales ---------- */
@@ -270,43 +368,67 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000a;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.modal:not([hidden]) {
+  opacity: 1;
 }
 
 .modal-box {
-  width: min(460px, 88vw);
+  width: min(440px, 90vw);
   max-height: 78vh;
   overflow-y: auto;
-  background: #14141f;
-  border: 1px solid #ffffff1f;
-  border-radius: 16px;
-  padding: 20px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #14141f 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .modal-box h2 {
   color: #ffb020;
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  text-shadow: 0 0 12px rgba(255,176,32,0.3);
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 #ach-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 #ach-list li {
-  padding: 8px 10px;
-  background: #ffffff08;
-  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
   font-size: 14px;
+  line-height: 1.4;
+  transition: background 0.15s;
+}
+
+#ach-list li:not(.locked) {
+  background: rgba(255,176,32,0.06);
+  border-color: rgba(255,176,32,0.12);
 }
 
 #ach-list li.locked {
-  opacity: 0.45;
+  opacity: 0.35;
+  border-style: dashed;
 }
 
 #stats-list {
@@ -316,27 +438,61 @@ body {
 }
 
 #stats-list div {
-  background: #ffffff08;
-  border-radius: 8px;
-  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 12px;
 }
 
 #stats-list dt {
-  font-size: 12px;
-  color: #999;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 #stats-list dd {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffb020;
 }
 
 .modal-box button {
   align-self: center;
-  background: #ffb020;
+  background: linear-gradient(135deg, #ffd060, #ffb020);
   border: none;
   color: #140a00;
   font-weight: 700;
-  padding: 10px 28px;
+  font-size: 15px;
+  padding: 12px 32px;
   border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(255,176,32,0.25);
+  transition: transform 0.15s;
+}
+
+.modal-box button:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Scrollbar ---------- */
+
+.modal-box::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modal-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-box::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+
+/* ---------- Utility ---------- */
+
+[hidden] {
+  display: none !important;
 }

@@ -41,6 +41,8 @@ const BOSSES = ['Dragón', 'Golem', 'Hidra', 'Titán', 'Liche', 'Behemoth']
 const BOSS_EMOJI = ['🐉', '🗿', '🐍', '🗽', '💀', '🦖']
 const bossLabel = (k: number) => `${BOSS_EMOJI[k % BOSSES.length]} ${BOSSES[k % BOSSES.length]}`
 
+let toastEl: HTMLDivElement | null = null
+
 // ---------- HUD ----------
 
 function renderHUD() {
@@ -61,13 +63,20 @@ function renderHUD() {
   $('boss-fill').style.width = `${Math.min(100, (hp / max) * 100)}%`
 }
 
+function flashBoss() {
+  const bar = $<HTMLDivElement>('boss-bar')
+  bar.classList.remove('hit')
+  void bar.offsetWidth
+  bar.classList.add('hit')
+}
+
 function toast(msg: string) {
-  const t = $('toast')
-  t.textContent = msg
-  t.hidden = false
+  if (!toastEl) toastEl = $<HTMLDivElement>('toast')
+  toastEl.textContent = msg
+  toastEl.hidden = false
   clearTimeout(toastTimer)
   toastTimer = window.setTimeout(() => {
-    t.hidden = true
+    toastEl!.hidden = true
   }, 1800)
 }
 
@@ -81,6 +90,7 @@ function onRep(oneHanded: boolean) {
   const e = applyRep(player, oneHanded)
   savePlayer(player)
   flashCount()
+  flashBoss()
   if (oneHanded) toast(`UNA MANO +${e.xpGained} XP 💪`)
   else toast(`+${e.xpGained} XP`)
   if (e.bossDefeated) {
@@ -166,16 +176,22 @@ function resizeCanvas() {
 // la diferencia aquí girando las coords (upgrade: ImageBitmap + detección a mano).
 function drawSkeleton(pts: Point[] | null) {
   resizeCanvas()
-  ctx.clearRect(0, 0, overlay.width, overlay.height)
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(overlay.width, overlay.height))
+  g.addColorStop(0, 'rgba(0,0,0,0.15)')
+  g.addColorStop(1, 'rgba(0,0,0,0.45)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, overlay.width, overlay.height)
   if (!pts) return
   const r = videoRect()
   const map = (p: Point): [number, number] => {
     const fx = frontCam ? 1 - p.x : p.x
     return [r.x + fx * r.w, r.y + p.y * r.h]
   }
-  ctx.lineWidth = 3
-  ctx.strokeStyle = '#ffb020'
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'rgba(120,240,160,0.9)'
   ctx.lineCap = 'round'
+  ctx.shadowColor = 'rgba(120,240,160,0.5)'
+  ctx.shadowBlur = 6
   for (const [a, b] of SKELETON) {
     if (!pts[a] || !pts[b]) continue
     const [x1, y1] = map(pts[a])
@@ -185,11 +201,12 @@ function drawSkeleton(pts: Point[] | null) {
     ctx.lineTo(x2, y2)
     ctx.stroke()
   }
-  ctx.fillStyle = '#ff6a3d'
+  ctx.shadowBlur = 0
+  ctx.fillStyle = '#6aff8a'
   for (const p of pts) {
     const [x, y] = map(p)
     ctx.beginPath()
-    ctx.arc(x, y, 4, 0, Math.PI * 2)
+    ctx.arc(x, y, 5, 0, Math.PI * 2)
     ctx.fill()
   }
 }
