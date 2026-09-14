@@ -289,6 +289,32 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ---------- Panel de calibración ---------- */
+
+#cal-panel {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 150px);
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,176,32,0.3);
+  color: #ffd98a;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+  z-index: 4;
+  pointer-events: none;
+}
+
+#cal-panel[hidden] {
+  display: none;
+}
+
 /* ---------- Start screen ---------- */
 
 #start-screen {

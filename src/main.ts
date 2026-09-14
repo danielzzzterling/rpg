@@ -24,6 +24,7 @@ const counter = new RepCounter()
 let landmarker: PoseLandmarker | null = null
 let running = false
 let frontCam = true
+let cal = false
 let lastTs = 0
 let toastTimer = 0
 
@@ -226,6 +227,9 @@ function loop(ts: number) {
         const a: Analysis = analyze(pts)
         const rep = counter.update(a)
         if (rep) onRep(rep.oneHanded)
+        if (cal) {
+          $('cal-panel').textContent = `codo ${a.elbow.toFixed(0)}° · gap ${a.shoulderGap.toFixed(2)} · ${counter.currentPhase}`
+        }
       } else {
         drawSkeleton(null)
       }
@@ -283,6 +287,10 @@ async function startSession() {
 function bind() {
   $('btn-start').addEventListener('click', () => void startSession())
   $('btn-add').addEventListener('click', () => onRep(false))
+  $('btn-cal').addEventListener('click', () => {
+    cal = !cal
+    $('cal-panel').hidden = !cal
+  })
   $('btn-flip').addEventListener('click', () => {
     frontCam = !frontCam
     void startCamera().catch(e => console.error(e))

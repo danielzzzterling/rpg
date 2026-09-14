@@ -2,8 +2,19 @@
 // la cámara lateral vs frontal y tu técnica cambian los umbrales.
 
 export const CONFIG = {
-  // Ángulos del codo (grados) para clasificar brazo arriba/abajo.
-  // Umbrales base de Google para push-ups con angle-based counting.
+  // Señal de conteo: 'gapY' cuenta la altura de los hombros sobre las manos
+  // (robusta cuando la cámara ve el brazo de frente, teléfono en el piso);
+  // 'elbow' usa el ángulo del codo (útil solo con cámara lateral).
+  // Revisa los valores reales con el toggle 🎛️ del overlay antes de ajustar.
+  SIGNAL: 'gapY' as 'gapY' | 'elbow',
+
+  // Umbrales de gapY: distancia vertical (hombro medio -> muñeca media) / torso.
+  // Arriba: hombros bien elevados sobre las manos (> GAP_UP).
+  // Abajo: hombros casi a la altura de las muñecas (< GAP_DOWN).
+  GAP_UP: 0.5,
+  GAP_DOWN: 0.25,
+
+  // Umbrales del codo (grados) solo para SIGNAL: 'elbow'.
   ANGLE_UP: 160,
   ANGLE_DOWN: 90,
 
